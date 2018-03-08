@@ -19,7 +19,7 @@ writer = csv.writer(data, delimiter=',')
 writer.writerow(['id', 'subreddit', 'score', 'title', 'timeCreated', 'numComments'])
 
 for ndx, sub in enumerate(TOP_SUBS):
-    for submission in reddit.subreddit(sub).top(limit=1000):
+    for i, submission in enumerate(reddit.subreddit(sub).top(limit=1000)):
         votes = submission.score
         sub = submission.subreddit
         title = submission.title
@@ -27,6 +27,9 @@ for ndx, sub in enumerate(TOP_SUBS):
         num_comments = submission.num_comments
 
         writer.writerow([submission, sub, votes, title, time_created, num_comments])
+
+        if i % 100 == 0:
+            print((str(int((float(i + 1) / 1000.0) * 100))) + "% done with " + str(sub))
 
     print("Finished " + str(sub) + ". " + str(ndx + 1) + " done")
 
