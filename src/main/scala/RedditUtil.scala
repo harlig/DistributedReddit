@@ -12,7 +12,8 @@ object RedditUtil {
     sc.textFile("data/reddit.csv")
       .mapPartitionsWithIndex((ndx, iter) => if (ndx == 0) iter.drop(1) else iter)
       .map(line => {
-        val lineSplit = line.split(",")
+        val lineSplit = line.split(",").map(_.trim)
+
         val id = lineSplit(0)
         val subreddit = lineSplit(1)
         val score = lineSplit(2).toInt

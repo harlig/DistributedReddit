@@ -8,6 +8,6 @@ object Collin1 {
 
     val conf = new SparkConf().setAppName("Collin1").setMaster("local[4]")
 
-    RedditUtil.getRedditRDD(conf)
+    RedditUtil.getRedditRDD(conf).collect().foreach(println)
   }
 }
