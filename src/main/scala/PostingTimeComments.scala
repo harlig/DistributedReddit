@@ -1,7 +1,7 @@
 import java.time.Instant
 
 import org.apache.log4j.{Level, Logger}
-import org.apache.spark.{SparkConf, SparkContext}
+import org.apache.spark.SparkConf
 
 object PostingTimeComments {
   def main(args: Array[String]): Unit = {
