@@ -11,6 +11,7 @@
 .svn
 .classpath
 .project
+project/
 .settings
 target
 hadoop-common-project/hadoop-kms/downloads/
