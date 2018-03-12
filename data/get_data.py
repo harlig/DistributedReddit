@@ -22,7 +22,7 @@ for ndx, sub in enumerate(TOP_SUBS):
     for i, submission in enumerate(reddit.subreddit(sub).top(limit=1000)):
         votes = submission.score
         sub = submission.subreddit
-        title = submission.title
+        title = submission.title.replace(',', '').replace('"', '')
         time_created = submission.created
         num_comments = submission.num_comments
 
