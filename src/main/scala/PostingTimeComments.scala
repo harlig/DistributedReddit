@@ -20,25 +20,26 @@ object PostingTimeComments {
     lines.map(
       line =>
         line.split(",").map(
-        s =>
-          s.trim()
-      )
+          s =>
+            s.trim()
+        )
     ).map(
       spl =>
         (spl(4).toFloat, spl(5).toInt)
-    ).map{ case (time, com) =>
+    ).map { case (time, com) =>
 
-        if (com > maxComments) {
-          maxComments = com
-        }
-        if (com < minComments) {
-          minComments = com
-        }
+      if (com > maxComments) {
+        maxComments = com
+      }
+      if (com < minComments) {
+        minComments = com
+      }
 
       (time, com)
-    }.foreach{ case(k,v) =>
-      val d = new Date(k)
-        println(d)
+    }.foreach { case (k, v) =>
+//      new Date(k)
+      println
+    }
   }
 
 }
