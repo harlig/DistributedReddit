@@ -9,6 +9,7 @@ object PostingTimeComments {
     Logger.getLogger("akka").setLevel(Level.OFF)
 
     val conf = new SparkConf().setAppName("Driver").setMaster("local[4]")
+    val reddit = RedditUtil.getRedditRDD(conf)
 
     val sc = new SparkContext(conf)
 
