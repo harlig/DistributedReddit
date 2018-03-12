@@ -1,6 +1,5 @@
 import org.apache.spark.rdd.RDD
 import org.apache.spark.{SparkConf, SparkContext}
-import com.univocity.parsers.csv.{CsvParser, CsvParserSettings}
 
 case class RedditPost(id: String, subreddit: String, score: Number, title: String, timeCreated: Number, numComments: Number) {
 
