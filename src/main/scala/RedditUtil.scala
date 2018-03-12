@@ -1,3 +1,4 @@
+import org.apache.log4j.{Level, Logger}
 import org.apache.spark.rdd.RDD
 import org.apache.spark.{SparkConf, SparkContext}
 
@@ -7,6 +8,8 @@ case class RedditPost(id: String, subreddit: String, score: Number, title: Strin
 
 object RedditUtil {
   def getRedditRDD(conf: SparkConf): RDD[RedditPost] = {
+    Logger.getLogger("org").setLevel(Level.OFF)
+    Logger.getLogger("akka").setLevel(Level.OFF)
     val sc = new SparkContext(conf)
     sc.textFile("data/reddit.csv")
       .mapPartitionsWithIndex((ndx, iter) => if (ndx == 0) iter.drop(1) else iter)

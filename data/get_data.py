@@ -1,6 +1,7 @@
 import time
 import csv
 import praw
+import re
 
 
 TOP_SUBS = ['announcements', 'funny', 'AskReddit', 'todayilearned', 'science', 'worldnews', 'pics', 'IAmA', 'gaming', 'videos', 'movies', 'aww', 'Music', 'blog', 'gifs', 'news', 'explainlikeimfive', 'askscience', 'EarthPorn', 'books', 'television', 'mildlyinteresting', 'LifeProTips', 'Showerthoughts', 'space', 'DIY', 'Jokes', 'gadgets', 'nottheonion', 'sports', 'tifu', 'food', 'photoshopbattles', 'Documentaries', 'Futurology', 'history', 'InternetIsBeautiful', 'dataisbeautiful', 'UpliftingNews', 'listentothis', 'GetMotivated', 'personalfinance', 'OldSchoolCool', 'philosophy', 'Art', 'nosleep', 'WritingPrompts', 'creepy', 'TwoXChromosomes', 'Fitness', 'technology', 'WTF', 'bestof', 'AdviceAnimals', 'politics', 'atheism', 'interestingasfuck', 'europe', 'woahdude', 'BlackPeopleTwitter', 'oddlysatisfying', 'gonewild', 'leagueoflegends', 'pcmasterrace', 'reactiongifs', 'gameofthrones', 'wholesomememes', 'Unexpected', 'Overwatch', 'facepalm', 'trees', 'Android', 'lifehacks', 'me_irl', 'relationships', 'Games', 'nba', 'programming', 'tattoos', 'NatureIsFuckingLit', 'Whatcouldgowrong', 'CrappyDesign', 'dankmemes', 'nsfw', 'cringepics', '4chan', 'soccer', 'comics', 'sex', 'pokemon', 'malefashionadvice', 'NSFW_GIF', 'StarWars', 'Frugal', 'HistoryPorn', 'AnimalsBeingJerks', 'RealGirls', 'travel', 'buildapc', 'OutOfTheLoop']
@@ -16,17 +17,26 @@ print("Start: ", time.strftime("%Y-%m-%d %H:%M:%S"))
 data = open('reddit.csv', 'w')
 writer = csv.writer(data, delimiter=',')
 
-writer.writerow(['id', 'subreddit', 'score', 'title', 'timeCreated', 'numComments'])
+writer.writerow(['id', 'subreddit', 'score', 'title', 'timeCreated', 'numComments', 'subscribers'])
+
+count = 0
 
 for ndx, sub in enumerate(TOP_SUBS):
+    if count == 10:
+        break
+
+    count += 1
+
+    subs = reddit.subreddit(sub).subscribers
+
     for i, submission in enumerate(reddit.subreddit(sub).top(limit=1000)):
         votes = submission.score
         sub = submission.subreddit
-        title = submission.title.replace(',', '').replace('"', '').strip()
+        title = re.sub(r"[^a-zA-Z0-9]+", ' ', submission.title.strip().replace(',', '').replace('"', '').replace('\n', '').strip())
         time_created = submission.created
         num_comments = submission.num_comments
 
-        writer.writerow([submission, sub, votes, title, time_created, num_comments])
+        writer.writerow([submission, sub, votes, title, time_created, num_comments, subs])
 
         if i % 100 == 0:
             print((str(int((float(i + 1) / 1000.0) * 100))) + "% done with " + str(sub))
