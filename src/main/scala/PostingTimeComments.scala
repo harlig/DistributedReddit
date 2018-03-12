@@ -1,4 +1,4 @@
-import java.util.Date
+import java.time.Instant
 
 import org.apache.log4j.{Level, Logger}
 import org.apache.spark.{SparkConf, SparkContext}
@@ -14,11 +14,6 @@ object PostingTimeComments {
 
     val lines = sc.textFile("data/reddit.csv")
 
-    var minComments = Integer.MAX_VALUE
-    var maxComments = 0
-
-    var count = 0;
-
     lines.map(
       line =>
         line.split(",").map(
@@ -28,20 +23,13 @@ object PostingTimeComments {
     ).map(
       spl =>
         (spl(4).toFloat, spl(5).toInt)
-    ).map { case (time, com) =>
-
-      if (com > maxComments) {
-        maxComments = com
-      }
-      if (com < minComments) {
-        minComments = com
-      }
-
-      (time, com)
-    }.foreach { case (k, v) =>
-      val d = new Date(k.toInt)
-      count += 1
-      println(d, v, count)
+    ).map { case (k, v) =>
+      val hr = Instant.ofEpochSecond(k.toInt).toString.split("T")(1).split(":")(0).toInt
+      (hr, (v, 1))
+    }.reduceByKey{ case
+      ((x1, x2), (y1, y2)) => (x1 + y1, x2 + y2)
+    }.sortByKey().collect().foreach { case (hr, (a, b)) =>
+      println(hr, a / b.toFloat)
     }
   }
 
