@@ -9,12 +9,12 @@ object PostingTimeToScore {
     Logger.getLogger("org").setLevel(Level.OFF)
     Logger.getLogger("akka").setLevel(Level.OFF)
 
-    val conf = new SparkConf().setAppName("PostingTimeToScore").setMaster("local[4]")
+    val conf = new SparkConf().setAppName("PostingTimeToScore").setMaster("local[1]")
 
     val reddit = RedditUtil.getRedditRDD(conf)
 
     eachSubReddit(reddit)
-
+    allSubReddits(reddit)
   }
 
   def allSubReddits(reddit: RDD[RedditPost]): Unit = {
@@ -40,6 +40,5 @@ object PostingTimeToScore {
       .reduceByKey({case (s1, s2) => s1.intValue() + s2.intValue()})
       .takeOrdered(1)(Ordering[Int].reverse.on(_._2.intValue()))
       .foreach(println)
-
   }
 }
