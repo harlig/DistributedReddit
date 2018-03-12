@@ -25,8 +25,8 @@ object PostingTimeComments {
       )
     ).map(
       spl =>
-        (Integer.parseInt(spl(4)), Integer.parseInt(spl(5)))
-    ).map{ case (com, time) =>
+        (spl(4).toFloat, spl(5).toInt)
+    ).map{ case (time, com) =>
 
         if (com > maxComments) {
           maxComments = com
@@ -35,9 +35,10 @@ object PostingTimeComments {
           minComments = com
         }
 
-//      println(new Date(time))
-      (com, time)
-    }.foreach(println)
+      (time, com)
+    }.foreach{ case(k,v) =>
+      val d = new Date(k)
+        println(d)
   }
 
 }
