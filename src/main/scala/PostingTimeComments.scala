@@ -17,6 +17,8 @@ object PostingTimeComments {
     var minComments = Integer.MAX_VALUE
     var maxComments = 0
 
+    var count = 0;
+
     lines.map(
       line =>
         line.split(",").map(
@@ -37,8 +39,9 @@ object PostingTimeComments {
 
       (time, com)
     }.foreach { case (k, v) =>
-//      new Date(k)
-      println
+      val d = new Date(k.toInt)
+      count += 1
+      println(d, v, count)
     }
   }
 
