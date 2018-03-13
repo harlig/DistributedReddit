@@ -13,8 +13,8 @@ object PostingTimeToScore {
 
     val reddit = RedditUtil.getRedditRDD(conf)
 
-    eachSubReddit(reddit)
     allSubReddits(reddit)
+    eachSubReddit(reddit)
   }
 
   def allSubReddits(reddit: RDD[RedditPost]): Unit = {
@@ -24,9 +24,9 @@ object PostingTimeToScore {
 
         (postHour, post.score)
       })
-      .reduceByKey({case (s1, s2) => s1.intValue() + s2.intValue()})
+      .reduceByKey({case (s1, s2) => s1 + s2})
       .sortByKey()
-      .collect()
+      .takeOrdered(1)(Ordering[Int].reverse.on(_._2))
       .foreach(println)
   }
 
@@ -37,8 +37,11 @@ object PostingTimeToScore {
 
         ((post.subreddit, postHour), post.score)
       })
-      .reduceByKey({case (s1, s2) => s1.intValue() + s2.intValue()})
-      .takeOrdered(1)(Ordering[Int].reverse.on(_._2.intValue()))
+      .reduceByKey {case (s1, s2) => s1 + s2}
+      .map({case (nameHour, score) => (nameHour._1, (nameHour._2, score))})
+      .reduceByKey {case ((h1, s1), (h2, s2)) => if (s1 > s2) (h1, s1) else (h2, s2)}
+      .sortByKey()
+      .collect()
       .foreach(println)
   }
 }
