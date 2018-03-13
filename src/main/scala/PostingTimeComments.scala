@@ -10,13 +10,12 @@ object PostingTimeComments {
     Logger.getLogger("akka").setLevel(Level.OFF)
 
     val conf = new SparkConf().setAppName("Driver").setMaster("local[1]")
-    val reddit = RedditUtil.getRedditRDD(conf)
 
     val rdd = RedditUtil.getRedditRDD(conf)
 
-//    allSubs(rdd)
+    //    allSubs(rdd)
 
-    perSub(rdd)
+    perSub(rdd
   }
 
   def allSubs(rdd: RDD[RedditPost]): Unit = {
@@ -27,9 +26,9 @@ object PostingTimeComments {
         (hr, (redditPost.numComments, 1))
       }.reduceByKey{ case
       ((x1, x2), (y1, y2)) => (x1 + y1, x2 + y2)
-    }.sortByKey().collect().foreach { case (hr, (a, b)) =>
-      println(hr, a / b.toFloat)
-    }
+    }.map { case (hr, (a, b)) =>
+      (a / b.toFloat, hr)
+    }.sortByKey().collect().foreach(println)
   }
 
   def perSub(rdd: RDD[RedditPost]): Unit = {
@@ -40,10 +39,11 @@ object PostingTimeComments {
         (redditPost.subreddit + "," + hr.toString, (redditPost.numComments, 1))
       }.reduceByKey{ case
       ((x1, x2), (y1, y2)) => (x1 + y1, x2 + y2)
-    }.sortBy(a => (a._1.split(",")(0), a._1.split(",")(1).toInt)).collect().foreach { case (k, (a, b)) =>
+    }.map { case (k, (comments, posts)) =>
+      (k, comments / posts.toFloat)
+    }.sortBy(a => (a._1.split(",")(0), a._2)).collect().foreach { case (k, a) =>
       val spl = k.split(",")
-      println(spl(0), spl(1), a / b.toFloat)
+      println(spl(0), spl(1), a)
     }
   }
-
 }
