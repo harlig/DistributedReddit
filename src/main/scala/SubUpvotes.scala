@@ -19,7 +19,7 @@ object SubUpvotes {
   // How many average upvotes you get in each sub
   def allSubs(rdd: RDD[RedditPost]): Unit = {
     rdd.map { redditPost: RedditPost =>
-      (redditPost.subreddit, (redditPost.score.intValue(), 1))
+      (redditPost.subreddit, (redditPost.score, 1))
     }.reduceByKey{ case
       ((x1, x2), (y1, y2)) => (x1 + y1, x2 + y2)
     }.sortByKey().collect().foreach { case (sub, (a, b)) =>
@@ -30,7 +30,7 @@ object SubUpvotes {
   // How many average upvotes you get in each subreddit if it has 100k subs
   def weighted(rdd: RDD[RedditPost]): Unit = {
     rdd.map { redditPost: RedditPost =>
-      (redditPost.subreddit + "," + redditPost.subscribers, (redditPost.score.intValue(), 1))
+      (redditPost.subreddit + "," + redditPost.subscribers, (redditPost.score, 1))
     }.reduceByKey{ case
       ((x1, x2), (y1, y2)) => (x1 + y1, x2 + y2)
     }.map{ case (k, (v1, v2)) =>
