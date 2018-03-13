@@ -17,8 +17,6 @@ object RedditUtil {
       .map(line => {
         val lineSplit = line.split(",").map(_.trim)
 
-        println(lineSplit(0))
-
         val id = lineSplit(0)
         val subreddit = lineSplit(1)
         val score = lineSplit(2).toInt
