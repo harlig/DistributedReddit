@@ -3,9 +3,6 @@ import csv
 import praw
 import re
 
-
-TOP_SUBS = ['announcements', 'funny', 'AskReddit', 'todayilearned', 'science', 'worldnews', 'pics', 'IAmA', 'gaming', 'videos', 'movies', 'aww', 'Music', 'blog', 'gifs', 'news', 'explainlikeimfive', 'askscience', 'EarthPorn', 'books', 'television', 'mildlyinteresting', 'LifeProTips', 'Showerthoughts', 'space', 'DIY', 'Jokes', 'gadgets', 'nottheonion', 'sports', 'tifu', 'food', 'photoshopbattles', 'Documentaries', 'Futurology', 'history', 'InternetIsBeautiful', 'dataisbeautiful', 'UpliftingNews', 'listentothis', 'GetMotivated', 'personalfinance', 'OldSchoolCool', 'philosophy', 'Art', 'nosleep', 'WritingPrompts', 'creepy', 'TwoXChromosomes', 'Fitness', 'technology', 'WTF', 'bestof', 'AdviceAnimals', 'politics', 'atheism', 'interestingasfuck', 'europe', 'woahdude', 'BlackPeopleTwitter', 'oddlysatisfying', 'gonewild', 'leagueoflegends', 'pcmasterrace', 'reactiongifs', 'gameofthrones', 'wholesomememes', 'Unexpected', 'Overwatch', 'facepalm', 'trees', 'Android', 'lifehacks', 'me_irl', 'relationships', 'Games', 'nba', 'programming', 'tattoos', 'NatureIsFuckingLit', 'Whatcouldgowrong', 'CrappyDesign', 'dankmemes', 'nsfw', 'cringepics', '4chan', 'soccer', 'comics', 'sex', 'pokemon', 'malefashionadvice', 'NSFW_GIF', 'StarWars', 'Frugal', 'HistoryPorn', 'AnimalsBeingJerks', 'RealGirls', 'travel', 'buildapc', 'OutOfTheLoop']
-
 reddit = praw.Reddit(client_id='jIrXdcl2J6vsjw',
                      client_secret='N6eypRrFBJikJht595x0T75yLyM',
                      password='s89-zd6-BJn-oNo',
@@ -14,19 +11,19 @@ reddit = praw.Reddit(client_id='jIrXdcl2J6vsjw',
 
 print("Start: ", time.strftime("%Y-%m-%d %H:%M:%S"))
 
+with open('subs-raw.txt', 'r') as f:
+    CONTENT = f.readlines()
+TOP_SUBS = []
+for line in CONTENT:
+    if line.startswith('/r/', ):
+        TOP_SUBS.append(line[3:].split(' ')[0].strip())
+
 data = open('reddit.csv', 'w')
 writer = csv.writer(data, delimiter=',')
 
 writer.writerow(['id', 'subreddit', 'score', 'title', 'timeCreated', 'numComments', 'subscribers'])
 
-count = 0
-
 for ndx, sub in enumerate(TOP_SUBS):
-    if count == 10:
-        break
-
-    count += 1
-
     subs = reddit.subreddit(sub).subscribers
 
     for i, submission in enumerate(reddit.subreddit(sub).top(limit=1000)):
