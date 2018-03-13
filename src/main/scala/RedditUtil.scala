@@ -2,7 +2,7 @@ import org.apache.log4j.{Level, Logger}
 import org.apache.spark.rdd.RDD
 import org.apache.spark.{SparkConf, SparkContext}
 
-case class RedditPost(id: String, subreddit: String, score: Number, title: String, timeCreated: Number, numComments: Number) {
+case class RedditPost(id: String, subreddit: String, score: Number, title: String, timeCreated: Number, numComments: Number, subscribers: Number) {
 
 }
 
@@ -22,8 +22,9 @@ object RedditUtil {
         val title = lineSplit(3)
         val timeCreated = lineSplit(4).toDouble
         val numComments = lineSplit(5).toInt
+        val subscribers = lineSplit(6).toInt
 
-        RedditPost(id, subreddit, score, title, timeCreated, numComments)
+        RedditPost(id, subreddit, score, title, timeCreated, numComments, subscribers)
     })
   }
 }
