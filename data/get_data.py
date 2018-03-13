@@ -13,6 +13,7 @@ print("Start: ", time.strftime("%Y-%m-%d %H:%M:%S"))
 
 with open('subs-raw.txt', 'r') as f:
     CONTENT = f.readlines()
+
 TOP_SUBS = []
 for line in CONTENT:
     if line.startswith('/r/', ):
