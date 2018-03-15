@@ -1,21 +1,24 @@
+import java.time.Instant;
+import java.io._
 import org.apache.log4j.{Level, Logger}
 import org.apache.spark.SparkConf
 import org.apache.spark.rdd.RDD
 
 object SubUpvotes {
   def main(args: Array[String]): Unit = {
+    val before = Instant.now()
     Logger.getLogger("org").setLevel(Level.OFF)
     Logger.getLogger("akka").setLevel(Level.OFF)
 
-    val conf = new SparkConf().setAppName("Driver").setMaster("local[4]")
+    val conf = new SparkConf().setAppName("Driver").setMaster("local[1]")
 
     val rdd = RedditUtil.getRedditRDD(conf)
 
 //    allSubs(rdd)
 
-    println
-
     weighted(rdd)
+
+    println(Instant.now().toEpochMilli - before.toEpochMilli)
   }
 
   // How many average upvotes you get in each sub
@@ -40,5 +43,6 @@ object SubUpvotes {
     }.map{ case (k, (v1, v2, v3)) =>
       (100000 * ((v1 / v2.toFloat) / v3.toFloat), k)
     }.sortByKey().collect().foreach(println)
+
   }
 }

@@ -6,6 +6,7 @@ import org.apache.spark.rdd.RDD
 
 object PostingTimeComments {
   def main(args: Array[String]): Unit = {
+    val before = Instant.now()
     Logger.getLogger("org").setLevel(Level.OFF)
     Logger.getLogger("akka").setLevel(Level.OFF)
 
@@ -13,9 +14,10 @@ object PostingTimeComments {
 
     val rdd = RedditUtil.getRedditRDD(conf)
 
-    //    allSubs(rdd)
+        allSubs(rdd)
 
-    perSub(rdd
+//    perSub(rdd)
+    println(Instant.now().toEpochMilli - before.toEpochMilli)
   }
 
   def allSubs(rdd: RDD[RedditPost]): Unit = {
@@ -27,7 +29,7 @@ object PostingTimeComments {
       }.reduceByKey{ case
       ((x1, x2), (y1, y2)) => (x1 + y1, x2 + y2)
     }.map { case (hr, (a, b)) =>
-      (a / b.toFloat, hr)
+      (hr, a / b.toFloat)
     }.sortByKey().collect().foreach(println)
   }
 
