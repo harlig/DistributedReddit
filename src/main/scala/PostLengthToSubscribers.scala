@@ -1,16 +1,20 @@
+import java.time.Instant
+
 import org.apache.log4j.{Level, Logger}
 import org.apache.spark.SparkConf
 import org.apache.spark.rdd.RDD
 
 object PostLengthToSubscribers {
   def main(args: Array[String]): Unit = {
+    val before = Instant.now()
     Logger.getLogger("org").setLevel(Level.OFF)
     Logger.getLogger("akka").setLevel(Level.OFF)
 
     val conf = new SparkConf().setAppName("PostingTimeToScore").setMaster("local[4]")
 
     val reddit = RedditUtil.getRedditRDD(conf)
-    allSubs(reddit)
+    perSub(reddit)
+    println(Instant.now().toEpochMilli - before.toEpochMilli)
   }
 
   def allSubs(rdd: RDD[RedditPost]): Unit = {

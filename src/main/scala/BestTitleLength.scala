@@ -1,8 +1,11 @@
+import java.time.Instant
+
 import org.apache.log4j.{Level, Logger}
 import org.apache.spark.SparkConf
 import org.apache.spark.rdd.RDD
 
 object BestTitleLength {
+  val before = Instant.now()
   def main(args: Array[String]): Unit = {
     Logger.getLogger("org").setLevel(Level.OFF)
     Logger.getLogger("akka").setLevel(Level.OFF)
@@ -11,6 +14,7 @@ object BestTitleLength {
 
     val reddit = RedditUtil.getRedditRDD(conf)
     allSubs(reddit)
+    println(Instant.now().toEpochMilli - before.toEpochMilli)
   }
 
   def allSubs(rdd: RDD[RedditPost]): Unit = {
@@ -24,7 +28,7 @@ object BestTitleLength {
       .collect()
       .foreach(println)
   }
-  def perSub(rdd: RDD[RedditPost]): Unit = {
+  def perSubComments(rdd: RDD[RedditPost]): Unit = {
     rdd
       .map { post: RedditPost =>
         ((post.subreddit, post.title.length), post.numComments)
