@@ -24,9 +24,12 @@ object PostingTimeToScore {
 
         (postHour, post.score)
       })
+      .mapValues(value => (value, 1))
+      .reduceByKey {case ((sum1, count1), (sum2, count2)) => (sum1 + sum2, count1 + count2)}
+      .mapValues {case (sum, count) => sum / count}
       .reduceByKey({case (s1, s2) => s1 + s2})
       .sortByKey()
-      .takeOrdered(1)(Ordering[Int].reverse.on(_._2))
+      .collect()
       .foreach(println)
   }
 
@@ -35,13 +38,15 @@ object PostingTimeToScore {
       .map(post => {
         val postHour = Instant.ofEpochSecond(post.timeCreated.longValue()).toString.split("T")(1).split(":")(0).toInt
 
-        ((post.subreddit, postHour), post.score)
+        ((post.subreddit, postHour), 100000 * (1.0 * post.score) / post.subscribers)
       })
-      .reduceByKey {case (s1, s2) => s1 + s2}
-      .map({case (nameHour, score) => (nameHour._1, (nameHour._2, score))})
+      .mapValues(value => (value, 1))
+      .reduceByKey {case ((sum1, count1), (sum2, count2)) => (sum1 + sum2, count1 + count2)}
+      .mapValues {case (sum, count) => sum / count}
+      .map({case (nameHour, avgScore) => (nameHour._1, (nameHour._2, avgScore))})
       .reduceByKey {case ((h1, s1), (h2, s2)) => if (s1 > s2) (h1, s1) else (h2, s2)}
       .sortByKey()
-      .collect()
-      .foreach(println)
+      .takeOrdered(5)(Ordering[Double].on(_._2._2))
+      .foreach(x => println(x._1))
   }
 }
