@@ -3,11 +3,11 @@ import csv
 import praw
 import re
 
-reddit = praw.Reddit(client_id='jIrXdcl2J6vsjw',
-                     client_secret='N6eypRrFBJikJht595x0T75yLyM',
-                     password='s89-zd6-BJn-oNo',
-                     user_agent='scrapbot by /u/edoggee',
-                     username='calpolystudent42069')
+reddit = praw.Reddit(client_id='',
+                     client_secret='',
+                     password='',
+                     user_agent='',
+                     username='')
 
 print("Start: ", time.strftime("%Y-%m-%d %H:%M:%S"))
 
